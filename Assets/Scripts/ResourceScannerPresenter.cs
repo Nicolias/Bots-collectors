@@ -22,6 +22,7 @@ public class ResourceScannerPresenter
         if (delay <= 0)
             throw new ArgumentOutOfRangeException();
 
+        _coroutineServise = coroutineServise;
         _view = view;
         _delay = delay;
     }

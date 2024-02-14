@@ -9,4 +9,9 @@ public class ResourceView : MonoBehaviour
     {
         IsMining = true;
     }
+
+    public void PickUp()
+    {
+        Debug.Log("Mined");
+    }
 }
