@@ -30,6 +30,11 @@ public class ResourceScannerView : MonoBehaviour
         _presenter.Disable();
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawSphere(transform.position, _radius);
+    }
+
     public void ScaneArea()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, _radius, _resourcesLayer);
@@ -41,6 +46,7 @@ public class ResourceScannerView : MonoBehaviour
                 if(resource.IsMining == false)
                     resourcesForMine.Add(resource);
 
-        ResourcesDetected?.Invoke(resourcesForMine);
+        if (resourcesForMine.Count > 0)
+            ResourcesDetected?.Invoke(resourcesForMine);
     }
 }

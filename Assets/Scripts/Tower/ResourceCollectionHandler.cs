@@ -5,7 +5,7 @@ public class ResourceCollectionHandler : MonoBehaviour
 {
     [SerializeField] private ResourceScannerView _scanner;
 
-    [SerializeField] private MiningSquadView _squad;
+    [SerializeField] private SquadView _squad;
 
     private void OnEnable()
     {
@@ -19,8 +19,7 @@ public class ResourceCollectionHandler : MonoBehaviour
 
     private void OnRecourcesDetected(IEnumerable<ResourceView> resources)
     {
-        Queue<ResourceView> resourcesQueue = new Queue<ResourceView>(resources);
-
-        _squad.Mine(resourcesQueue.Dequeue());
+        foreach (ResourceView resource in resources)
+            _squad.Mine(resource);
     }
 }
