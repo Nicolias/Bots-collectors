@@ -9,13 +9,13 @@ public class ResourceRepositoryView : MonoBehaviour
 
     private void OnEnable()
     {
-        _resourceRepository.Added += OnResourceAdded;
+        _resourceRepository.Changed += OnResourceAdded;
         OnResourceAdded();
     }
 
     private void OnDisable()
     {
-        _resourceRepository.Added -= OnResourceAdded;
+        _resourceRepository.Changed -= OnResourceAdded;
     }
 
     private void OnResourceAdded()

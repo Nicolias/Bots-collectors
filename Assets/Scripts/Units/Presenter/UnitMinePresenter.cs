@@ -8,11 +8,19 @@ namespace Srcipts.Unit
         [SerializeField] private MoveState _moveState;
         [SerializeField] private MineState _mineState;
 
-        [SerializeField] private Transform _baseTransform;
+        private Transform _towerTransform;
 
         private ResourceView _currentResource;
 
         public event Action Mined;
+
+        public void Initialize(Transform towerTransform)
+        {
+            if (towerTransform == null)
+                throw new ArgumentNullException();
+
+            _towerTransform = towerTransform;
+        }
 
         public void Mine(ResourceView resource)
         {
@@ -40,7 +48,7 @@ namespace Srcipts.Unit
 
             _moveState.Enable();
             _mineState.Disable();
-            _moveState.MoveTo(_baseTransform.position);
+            _moveState.MoveTo(_towerTransform.position);
         }
 
         private void OnBaseReached()

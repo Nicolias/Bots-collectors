@@ -18,21 +18,30 @@ public class ResourcePool : MonoBehaviour
 
     public ResourceView Get()
     {
+        ResourceView resource;
+
         if (_pool.Count == 0)
         {
-            ResourceView resource = Instantiate(_prefab, _container);
-            resource.Mined += Put;
-            resource.gameObject.SetActive(true);
+            resource = Instantiate(_prefab, _container);
             _createdResource.Add(resource);
-
-            return resource;
+        }
+        else
+        {
+            resource = _pool.Dequeue();
         }
 
-        return _pool.Dequeue();
+        resource.Mined += Put;
+        resource.gameObject.SetActive(true);
+        resource.Reset();
+
+        return resource;
     }
 
     private void Put(ResourceView resource)
     {
+        resource.Mined -= Put;
+        resource.gameObject.SetActive(false);
+
         _pool.Enqueue(resource);
     }
 }

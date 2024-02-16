@@ -6,9 +6,17 @@ using UnityEngine;
 
 public class SquadView : MonoBehaviour
 {
-    [SerializeField] private List<UnitView> _units;
-
+    [SerializeField] private int _startUnitsCount;
     [SerializeField] private ResourceRepository _repository;
+
+    [SerializeField] private UnitFactory _unitsFactory;
+
+    private List<UnitView> _units = new List<UnitView>();
+
+    private void Awake()
+    {
+        _units.AddRange(_unitsFactory.Create(_startUnitsCount));
+    }
 
     private void OnEnable()
     {
@@ -18,6 +26,14 @@ public class SquadView : MonoBehaviour
     private void OnDisable()
     {
         _units.ForEach(unit => unit.Mined -= OnMined);
+    }
+
+    public void Add(UnitView unit)
+    {
+        if (unit == null)
+            throw new ArgumentNullException();
+
+        _units.Add(unit);
     }
 
     public void Mine(ResourceView resource)
@@ -36,6 +52,6 @@ public class SquadView : MonoBehaviour
 
     private void OnMined(ResourceView resource)
     {
-        _repository.Add(resource);
+        _repository.Add();
     }
 }

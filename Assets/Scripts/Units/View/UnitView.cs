@@ -6,12 +6,21 @@ namespace Srcipts.Unit
     public class UnitView : MonoBehaviour
     {
         [SerializeField] private UnitMinePresenter _minePresenter;
+        [SerializeField] private Rigidbody _rigidbody;
 
         private ResourceView _currentResource;
 
         public bool IsMining { get; private set; }
 
         public event Action<ResourceView> Mined;
+
+        public void Initialize(Transform towerTransform)
+        {
+            if (towerTransform == null)
+                throw new ArgumentNullException();
+
+            _minePresenter.Initialize(towerTransform);
+        }
 
         private void OnEnable()
         {

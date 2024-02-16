@@ -35,10 +35,8 @@ public class ResourceGenerator : MonoBehaviour
         {
             yield return wait;
 
-            if (_pool.ExistingCount >= _maxResourceExistCount)
-                yield return null;
-
-            GenerateSpawnPoint().Set(_pool.Get());
+            if (_pool.ExistingCount <= _maxResourceExistCount)
+                GenerateSpawnPoint().Set(_pool.Get());
         }
     }
 
