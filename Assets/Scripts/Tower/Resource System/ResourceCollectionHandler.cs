@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Srcipts.Unit;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceCollectionHandler : MonoBehaviour
@@ -20,6 +21,7 @@ public class ResourceCollectionHandler : MonoBehaviour
     private void OnRecourcesDetected(IEnumerable<ResourceView> resources)
     {
         foreach (ResourceView resource in resources)
-            _squad.Mine(resource);
+            if (_squad.TryGetFreeUnit(out UnitView unit))
+                unit.Mine(resource);
     }
 }

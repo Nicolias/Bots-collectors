@@ -5,26 +5,33 @@ namespace Srcipts.Unit
 {
     public class UnitView : MonoBehaviour
     {
+        [SerializeField] private UnitBuildPresenter _buildPresenter;
         [SerializeField] private UnitMinePresenter _minePresenter;
         [SerializeField] private Rigidbody _rigidbody;
 
         private ResourceView _currentResource;
 
-        public bool IsMining { get; private set; }
+        public bool IsBusy { get; private set; }
 
         public event Action<ResourceView> Mined;
+        public event Action<UnitView> Freed;
 
-        public void Initialize(Transform towerTransform)
+        public void Initialize(Transform towerTransform, TowerFactory towerFactory)
         {
             if (towerTransform == null)
                 throw new ArgumentNullException();
+            
+            if (towerFactory == null)
+                throw new ArgumentNullException();
 
             _minePresenter.Initialize(towerTransform);
+            _buildPresenter.Initialize(towerFactory);
         }
 
         private void OnEnable()
         {
-            _minePresenter.Mined += OnMined;            
+            _minePresenter.Mined += OnMined;
+            _buildPresenter.Built += OnBuilt;
         }
 
         private void OnDisable()
@@ -37,20 +44,40 @@ namespace Srcipts.Unit
             if (resource == null)
                 throw new ArgumentNullException();
 
-            if (IsMining)
+            if (IsBusy)
                 throw new InvalidOperationException();
 
             _currentResource = resource;
-            IsMining = true;
+            IsBusy = true;
 
             resource.SelectForMine();
             _minePresenter.Mine(resource);
         }
 
+        public void BuildTower(Vector3 buildPosition)
+        {
+            if (IsBusy)
+                throw new InvalidOperationException();
+
+            IsBusy = true;
+
+            _buildPresenter.Build(buildPosition);
+        }
+
         private void OnMined()
         {
-            IsMining = false;
+            IsBusy = false;
             Mined?.Invoke(_currentResource);
+            Freed?.Invoke(this);
+        }
+
+        private void OnBuilt(Tower newTower)
+        {
+            newTower.Add(this);
+            _minePresenter.Initialize(newTower.SquadTransform);
+
+            IsBusy = false;
+            Freed?.Invoke(this);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Srcipts.Unit;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,10 +9,20 @@ public class UnitFactory : MonoBehaviour
     [SerializeField] private Transform _container;
     [SerializeField] private Transform _towerTransform;
 
+    private TowerFactory _towerFactory;
+
+    public void Initialize(TowerFactory towerFactory)
+    {
+        if (towerFactory == null)
+            throw new ArgumentNullException();
+
+        _towerFactory = towerFactory;
+    }
+
     public UnitView Create()
     {
         UnitView newUnit = Instantiate(_prefab, _container);
-        newUnit.Initialize(_towerTransform);
+        newUnit.Initialize(_towerTransform, _towerFactory);
 
         return newUnit;
     }

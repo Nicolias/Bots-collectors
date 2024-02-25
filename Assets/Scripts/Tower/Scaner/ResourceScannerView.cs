@@ -9,30 +9,23 @@ public class ResourceScannerView : MonoBehaviour
 
     [SerializeField] private float _delay;
 
-    [SerializeField] private CoroutineServise _coroutineServise;
-
     private ResourceScannerPresenter _presenter;
 
     public event Action<IEnumerable<ResourceView>> ResourcesDetected;
 
-    private void Awake()
+    public void Initialize(CoroutineServise coroutineServise)
     {
-        _presenter = new ResourceScannerPresenter(_coroutineServise, this, _delay);
+        _presenter = new ResourceScannerPresenter(coroutineServise, this, _delay);
     }
 
-    private void OnEnable()
+    public void Enable()
     {
         _presenter.Enable();
     }
 
-    private void OnDisable()
+    public void Disable()
     {
         _presenter.Disable();
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.DrawSphere(transform.position, _radius);
     }
 
     public void ScaneArea()

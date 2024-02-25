@@ -4,8 +4,14 @@ using UnityEngine;
 public class ResourceRepositoryView : MonoBehaviour
 {
     [SerializeField] private ResourceRepository _resourceRepository;
-
     [SerializeField] private TMP_Text _text;
+
+    private Transform _camera;
+
+    private void Awake()
+    {
+        _camera = Camera.main.transform;
+    }
 
     private void OnEnable()
     {
@@ -16,6 +22,14 @@ public class ResourceRepositoryView : MonoBehaviour
     private void OnDisable()
     {
         _resourceRepository.Changed -= OnResourceAdded;
+    }
+
+    private void Update()
+    {
+        if (enabled == false)
+            return;
+
+        transform.rotation = _camera.rotation;
     }
 
     private void OnResourceAdded()

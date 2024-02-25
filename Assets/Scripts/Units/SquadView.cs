@@ -11,21 +11,25 @@ public class SquadView : MonoBehaviour
 
     [SerializeField] private UnitFactory _unitsFactory;
 
-    private List<UnitView> _units = new List<UnitView>();
+    private List<UnitView> _units;
+    private Queue<UnitView> _freeUnits;
 
-    private void Awake()
+    public void Initialize()
     {
-        _units.AddRange(_unitsFactory.Create(_startUnitsCount));
+        _units = new List<UnitView>(_unitsFactory.Create(_startUnitsCount));
+        _freeUnits = new Queue<UnitView>(_units);
     }
 
-    private void OnEnable()
+    public void Enable()
     {
         _units.ForEach(unit => unit.Mined += OnMined);
+        _units.ForEach(unit => unit.Freed += AddToFree);
     }
 
-    private void OnDisable()
+    public void Disable()
     {
         _units.ForEach(unit => unit.Mined -= OnMined);
+        _units.ForEach(unit => unit.Freed -= AddToFree);
     }
 
     public void Add(UnitView unit)
@@ -34,24 +38,40 @@ public class SquadView : MonoBehaviour
             throw new ArgumentNullException();
 
         _units.Add(unit);
+        unit.Freed += AddToFree;
+        unit.Mined += OnMined;
+
+        if (unit.IsBusy == false)
+            _freeUnits.Enqueue(unit);
     }
 
-    public void Mine(ResourceView resource)
+    public void Remove(UnitView unit)
     {
-        if (resource == null)
+        if (unit == null)
             throw new ArgumentNullException();
 
-        if (resource.IsMining)
-            throw new InvalidOperationException();
+        _units.Remove(unit);
+        unit.Freed -= AddToFree;
+        unit.Mined -= OnMined;
+    }
 
-        List<UnitView> freeUnits = _units.Where(unit => unit.IsMining == false).ToList();
+    public bool TryGetFreeUnit(out UnitView unit)
+    {
+        if (_freeUnits.Count > 0)
+            unit = _freeUnits.Dequeue();
+        else
+            unit = null;
 
-        if (freeUnits.Count > 0)
-            freeUnits.First().Mine(resource);
+        return unit != null;
     }
 
     private void OnMined(ResourceView resource)
     {
         _repository.Add();
+    }
+
+    private void AddToFree(UnitView unit)
+    {
+        _freeUnits.Enqueue(unit);
     }
 }

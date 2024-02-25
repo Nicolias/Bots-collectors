@@ -58,5 +58,10 @@ namespace Srcipts.Unit
             _moveState.Disable();
             Mined?.Invoke();
         }
+
+        internal void Initialize(object squadTransform)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
